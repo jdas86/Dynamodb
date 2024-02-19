@@ -36,13 +36,12 @@ class Dynamodb_compression:
                 TableName=self.table_name,
                 Item={
                     "id": {"S": str(item["id"])},
-                    "id": {"S": str(item["id"])},
                     "actor": {"B": item["actor"]},
-                    "repo": {"B": item["actor"]},
-                    "payload": {"B": item["actor"]},
-                    "public": {"S": str(item["id"])},
-                    "create_at": {"S": str(item["id"])},
-                    "org": {"B": item["actor"]},
+                    "repo": {"B": item["repo"]},
+                    "payload": {"B": item["payload"]},
+                    "public": {"S": str(item["public"])},
+                    "created_at": {"S": str(item["created_at"])},
+                    "org": {"B": item["org"]},
                 }
             )
 
@@ -56,7 +55,7 @@ class Dynamodb_compression:
             items_list = [{"id": item["id"]["S"], "actor": item["actor"]["B"]} for item in items]
             # Create pandas DataFrame, decompressing the "actor_new" column
             df = pandas.DataFrame(items_list).assign(
-            actor_new=lambda df: df["actor"].apply(lambda x: zlib.decompress(x).decode()))
+            actor_new=lambda df: df["actor"].apply(lambda x: gzip.decompress(x).decode()))
 
             # Drop the compressed column if no longer needed
             df = df.drop("actor", axis=1)
