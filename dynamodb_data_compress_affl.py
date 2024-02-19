@@ -2,7 +2,7 @@ import json
 import io
 from aws_connection_settings import ddb_client, s3_client, s3_resource, ddb_resource
 import pandas
-import zlib
+import gzip
 import os
 
 compression_col_list = ['actor', 'repo', 'payload', 'org']
@@ -25,7 +25,7 @@ class Dynamodb_compression:
     # Doing compression for the nested dict columns
     def compression_process(self, compression_col_list):
         for col_list in compression_col_list:
-            self.df_data[col_list] = self.df_data[col_list].apply(lambda x: zlib.compress(str(x).encode()))
+            self.df_data[col_list] = self.df_data[col_list].apply(lambda x: gzip.compress(str(x).encode()))
         self.items_dict = self.df_data.to_dict(orient="records")
 
     #Writing data to dynamodb table
